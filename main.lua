@@ -273,7 +273,7 @@ function love.load()
 	require "notice"
 	require "languages"
 	
-	local luas = {"intro", "menu", "levelscreen", "game", "editor", "physics", "online", "quad", "animatedquad", "entity", "dailychallenge",
+	local luas = {"a_variables", "intro", "menu", "levelscreen", "game", "editor", "physics", "online", "quad", "animatedquad", "entity", "dailychallenge",
 				"portalwall", "tile", "mario", "mushroom", "hatconfigs", "flower", "star", "coinblockanimation",
 				"scrollingscore", "platform", "platformspawner", "portalparticle", "portalprojectile", "box", "emancipationgrill", "door",
 				"button", "groundlight", "wallindicator", "walltimer", "lightbridge", "faithplate", "laser", "laserdetector", "gel", "geldispenser",
@@ -1198,7 +1198,7 @@ function lovedraw()
 	
 	notice.draw()
 	
-	if showfps then
+	if SHOWFPS then
 		love.graphics.setColor(255, 255, 255, 180)
 		properprintfast(love.timer.getFPS(), 2*scale, 2*scale)
 	end
@@ -1948,17 +1948,48 @@ function love.keypressed(key, scancode, isrepeat, textinput)
 	
 	if key == "0" and HITBOXDEBUG then
 		HITBOXDEBUGANIMS = not HITBOXDEBUGANIMS
-	elseif key == "f10" then
-		if android then
-			--hide ui
-			androidHIDE = not androidHIDE
+	end
+
+	if key == "f1" then
+	elseif key == "f2" then
+	elseif key == "f3" then
+	elseif key == "f4" then
+	elseif key == "f5" then
+		speedtarget = 1
+		bullettime = not bullettime
+		local t = "off"; if bullettime then t = "on" end
+		notice.new(string.format("[ bullettime set to %s! ]", t), notice.white, 3)
+	elseif key == "f6" then
+		if objects["player"][1].swimwing then
+			objects["player"][1].swimwing = false
+			objects["player"][1]:dive(false)
+			notice.new("[ swim disabled ]", notice.white, 3)
 		else
-			HITBOXDEBUG = not HITBOXDEBUG
+			objects["player"][1]:dive(true)
+			objects["player"][1].swimwing = 10000
+			notice.new("[ swim enabled ]", notice.white, 3)
 		end
+	elseif key == "f7" and editormode then
+		declutter()
+	elseif key == "f8" and editormode then
+		reloadall()
+		notice.new("[ reloaded all ]", notice.white, 3)
+	elseif key == "f9" then
+		HIDEFRONT = not HIDEFRONT
+		local t = "hidden"; if HITBOXDEBUG then t = "shown" end
+		notice.new(string.format("[ hud set to %s ]", t), notice.white, 3)
+	elseif key == "f10" then
+		HITBOXDEBUG = not HITBOXDEBUG
+		local t = "hidden"; if HITBOXDEBUG then t = "shown" end
+		notice.new(string.format("[ hitboxes set to %s ]", t), notice.white, 3)
 	elseif key == "f11" then
-		showfps = not showfps
+		SHOWFPS = not SHOWFPS
+        local t = "hidden"; if SHOWFPS then t = "shown" end
+		notice.new(string.format("[ fps set to %s ]", t), notice.white, 3)
 	elseif key == "f12" then
 		love.mouse.setGrabbed(not love.mouse.isGrabbed())
+		local t = "ungrabbed"; if love.mouse.isGrabbed() then t = "grabbed" end
+		notice.new(string.format("[ grab set to %s ]", t), notice.white, 3)
 	end
 	
 	if gamestate == "menu" or gamestate == "mappackmenu" or gamestate == "onlinemenu" or gamestate == "lobby" or gamestate == "options" then
@@ -2905,8 +2936,8 @@ function loadnitpicks()
 		elseif oldfamilyfriendly then
 			love.filesystem.remove("alesans_entities/familyfriendly.txt")
 		end
-		if t.showfps then
-			showfps = t.showfps
+		if t.SHOWFPS then
+			SHOWFPS = t.SHOWFPS
 		end
 		InfiniteLivesMultiplayer = t.infinitelivesmultiplayer
 		SlowBackgrounds = t.slowbackgrounds
@@ -2917,6 +2948,7 @@ function loadnitpicks()
 		CenterCamera = t.centercamera
 		_3DMODE = t.render3d
 		HITBOXDEBUG = t.viewhitboxes
+		HIDEFRONT = t.hidefront
 		if t.pcversion then
 			android = false
 			androidsafe = true
@@ -3018,4 +3050,214 @@ function deepcopy(orig)
         copy = orig
     end
     return copy
+end
+
+-- BETTER PRINT (By WilliamFrog) --
+
+__print = print
+function print(...)
+    local vals = {...}
+    local outvals = {}
+    for i, t in pairs(vals) do
+        if type(t) == "table" then
+            outvals[i] = tabletostring(t)
+        elseif type(t) == "function" then
+            outvals[i] = "function"
+        else
+            outvals[i] = tostring(t)
+        end
+    end
+    __print(unpack(outvals))
+end
+
+function tabletostring(t)
+    local array = true
+    local ai = 0
+    local outtable = {}
+    for i, v in pairs(t) do
+        if type(v) == "table" then
+            outtable[i] = tabletostring(v)
+        elseif type(v) == "function" then
+            outtable[i] = "function"
+        else
+            outtable[i] = tostring(v)
+        end
+
+        ai = ai + 1
+        if t[ai] == nil then
+            array = false
+        end
+    end
+    local out = ""
+    if array then
+        out = "[" .. table.concat(outtable,",") .. "]"
+    else
+        for i, v in pairs(outtable) do
+            out = string.format("%s%s: %s, ", out, i, v)
+        end
+        out = "{" .. out .. "}"
+    end
+    return out
+end
+
+-- DECLUTTER (By WilliamFrog) --
+
+local function getmaxprops(x, y, layer)
+    if tilequads[map[x][y][layer]].quadlist then
+        local outtable = {}
+        for i, v in pairs(tilequads[map[x][y][layer]].properties) do
+            for j, g in pairs(v) do
+                if g and not outtable[j] then
+                    outtable[j] = g
+                end
+            end
+        end
+        return outtable
+    else
+        return tilequads[map[x][y][layer]]
+    end
+end
+local function transtable(x, y, layer)
+	local v = tilequads[map[x][y][layer]].image:getData()
+
+	local outtable = {}
+	local quadtable = {}
+	if tilequads[map[x][y][layer]].quadlist then
+		quadtable = tilequads[map[x][y][layer]].quadlist
+	else
+		quadtable = {tilequads[map[x][y][layer]].quad}
+	end
+	for i, g in pairs(quadtable) do
+		local fx, fy = g:getViewport()
+		local count = 1
+		for x1 = fx, fx+15 do
+			for y1 = fy, fy+15 do
+				local r, g, b, a = v:getPixel(x1, y1)
+				local transparent = false
+				if (a < 255 and layer == 1) or (a == 0 and layer == "back") then
+					transparent = true
+				end
+
+				if transparent and ((layer == 1 and (outtable[count] == true or outtable[count] == nil)) or (layer == "back" and (outtable[count] == nil))) then
+					outtable[count] = false
+				elseif transparent == false and ((layer == 1 and (outtable[count] == nil)) or (layer == "back" and (outtable[count] == false or outtable[count] == nil))) then
+					outtable[count] = true
+				end
+				count = count + 1
+			end
+		end
+	end
+	return outtable
+end
+function declutter()
+	local tilecount = 0
+	local enemycount = 0
+	local dtilecount = 0
+	local otilecount = 0
+	for x = 1, mapwidth do
+		for y = 1, mapheight do
+			if map[x][y][1] == 1 and map[x][y]["back"] then
+				local v = getmaxprops(x,y,"back")
+				if (not v.invisible) and (not v.collision) and (not v.lava) and (not v.water) and (not v.vine) and (not v.fence) and (not v.coin) and (not v.forground) then
+					local newy = math.min(y+1,mapheight)
+					local g = getmaxprops(x,newy,1)
+					if not ((g.collision and (g.coinblock or g.breakable or g.noteblock)) and map[x][newy][2]) then
+						map[x][y][1] = map[x][y]["back"]
+						map[x][y]["back"] = nil
+						tilecount = tilecount+1
+					end
+				end
+			end
+			if map[x][y][2] == 1 then
+				map[x][y][2] = nil
+				enemycount = enemycount+1
+			end
+			if map[x][y][1] == map[x][y]["back"] then
+				map[x][y]["back"] = nil
+				dtilecount = dtilecount+1
+			end
+			if tilequads[map[x][y][1]].image and map[x][y]["back"] and tilequads[map[x][y]["back"]].image and not (tilequads[map[x][y][1]].invisible or tilequads[map[x][y][1]].coinblock or tilequads[map[x][y][1]].breakable or tilequads[map[x][y][1]].noteblock) then
+				local frontable = transtable(x, y, 1)
+				local backtable = transtable(x, y, "back")
+				local pass = true
+				for i=1, 256 do
+					if backtable[i] and not frontable[i] then
+						pass = false
+						break
+					end
+				end
+				if pass then
+					map[x][y]["back"] = nil
+					otilecount = otilecount + 1
+				end
+			end
+		end
+	end
+	local text1 = "no tiles to raise"
+	local text2 = "no enemies to clear"
+	local text3 = "no double tiles"
+	local text4 = "no obscured tiles"
+	if tilecount > 0 then text1 = "raised "..tilecount.." tiles!" end
+	if enemycount > 0 then text2 = "cleared "..enemycount.." enemies!" end
+	if dtilecount > 0 then text3 = "cleared "..dtilecount.." double tiles!" end
+	if otilecount > 0 then text4 = "cleared "..otilecount.." obscured tiles!" end
+	notice.new("[ decluttered tiles ]\n"..text1.."\n"..text2.."\n"..text3.."\n"..text4)
+	generatespritebatch()
+end
+
+-- RELOAD ALL --
+
+function reloadall()
+    -- sprites --
+    loadcustomsprites()
+
+    -- default tiles --
+    for i = 1, #smbspritebatch do
+        smbspritebatch[i]:setTexture(smbtilesimg)
+        portalspritebatch[i]:setTexture(portaltilesimg)
+    end
+
+    -- custom tiles --
+    if love.filesystem.exists(mappackfolder .. "/" .. mappack .. "/tiles.png") then
+        --remove custom sprites
+        for i = smbtilecount+portaltilecount+1, #tilequads do
+            tilequads[i] = nil
+        end
+        for i = smbtilecount+portaltilecount+1, #rgblist do
+            rgblist[i] = nil
+        end
+
+        --add custom tiles
+        customtiles = true
+        loadtiles("custom")
+        customspritebatch = {}
+        for i = 1, 2 do
+            customspritebatch[i] = {}
+            for i2 = 1, #customtilesimg do
+                customspritebatch[i][i2] = love.graphics.newSpriteBatch( customtilesimg[i2], maxtilespritebatchsprites )
+            end
+        end
+    else
+        customtiles = false
+        customtilecount = 0
+    end
+	
+    if love.filesystem.exists(mappackfolder .. "/" .. mappack .. "/animated/1.png") then
+        loadanimatedtiles()
+    end
+	
+    -- back/foreground --
+	loadcustombackgrounds() -- for menu
+	loadcustomforeground(customforeground)
+	loadcustombackground(custombackground)
+
+    -- other, simple stuff --
+    loadcustomtext()
+    loadcustomsounds()
+    loadcustommusic()
+    enemies_load()
+    animationsystem_load()
+
+	collectgarbage()
+    generatespritebatch()
 end

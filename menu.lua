@@ -581,19 +581,12 @@ function menu_draw()
 			
 			if i == 9 then love.graphics.setColor(255, 255, 255) end
 			
-			--if not (not disabletips and menutipoffset > -width*16) then
-				if not (custombackground or customforeground) or hudoutline then
-					love.graphics.setColor(0, 0, 0)
-					properprint("mod by alesan99", (width*16-#("mod by alesan99")*8-7)*scale, 209*scale) --a little less intrusive
-					love.graphics.setColor(255, 255, 255)
-				end
-				properprint("mod by alesan99", (width*16-#("mod by alesan99")*8-8)*scale, 208*scale) --a little less intrusive
-			--end
+			properprintbackground(" mod by alesan99\nversion by aidan", (width*16-#(" mod by alesan99")*8-8)*scale, 202*scale)
 			
 			love.graphics.translate(-tx, -ty)
 		end
 		
-		if players >= 1 then
+		if players > 1 then
 			love.graphics.draw(playerselectarrowimg, (138-(math.ceil((utf8.len(TEXT["player game"])+2)/2)*8))*scale, 138*scale, 0, scale, scale)
 		end
 		
@@ -2235,7 +2228,7 @@ function menu_keypressed(key, unicode)
 			if players > 1 then
 				players = players - 1
 			elseif players == 1 then
-				onlinemenu_load()
+				--onlinemenu_load()
 			end
 		elseif (key == "right" or key == "d") then
 			players = players + 1

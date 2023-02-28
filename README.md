@@ -1,47 +1,28 @@
 <p align="center"><img src="https://i.imgur.com/U5xzR1h.png"></p>
-<p align="center">This is the repository for my mod Mari0: Alesan99's Entities</p>
+<p align="center">This is the repository for my mod of Alesan99's mod of mari0, Mari0: Alesan99's Entities</p>
 
-## 👷 Contributions
-Bug fixes and quality of life improvements are welcome!
-This includes stuff like custom enemy properties and new animations.
+## Changelist!
+Added - 'a_variables.lua', used to store global variables made for the mod.
+Added - A_region size for trigger, risingwater and camstop, allows for better refinement.
+Added - Better print with table support. (By WilliamFrog)
+Added - Better debug keys
+Added - Custom editor scroll speeds (A_scrollspeed & A_scrollspeedfast)
+Added - Dialog previews for editor.
 
-Avoid major additions that will potentially cause bugs or complicate the game/code (Stuff like powerups).
-I appreciate the help, but the goal is to continue the mod while I am busy. Major changes will only increase my workload and make the mod even buggier.
+Tweaked - menu to say "version by aidan" because i want people to know that.
+Tweaked - right click menu for region trigger, now uses an input.
+Tweaked - entitiy menu to show name and ID instead of a useless description.
+Tweaked - less annoying level testing text.
 
-## 📥 Downloads
-[**Downloads are available here.**](https://forum.stabyourself.net/viewtopic.php?f=13&t=3636)
+Removed - online
+Removed - herobrine
 
-Development builds are available [here](https://github.com/alesan99/mari0_ae/actions).
-
-## 💡 About
-**Alesan99's Entities** adds many entities to [Mari0](https://stabyourself.net/mari0)! From Enemies to power ups you'll never run out of entities to make levels now!
-
-It even has bonus features like online multiplayer, custom characters, custom enemies/powerups, animated tiles, infinite levels and music, vertical scrolling, tile properties, and more!
-
-<br>
-
-<p align="center"><img src="https://i.imgur.com/th4xsMi.png"></p>
-
-<br>
-
-<details>
-  <summary>🖼️ Show more screenshots</summary>
-
-  <blockquote>
-  <p align="center"><img src="https://i.imgur.com/fS2o7pc.png"></p>
-  <p align="center"><img src="https://i.imgur.com/67uPzZZ.png"></p>
-  <p align="center"><img src="https://i.imgur.com/VhvWBcj.png"></p>
-  <p align="center"><img src="https://i.imgur.com/tdDfhkR.png"></p>
-  <p align="center"><img src="https://i.imgur.com/CPQN00C.png"></p>
-  <p align="center"><img src="https://i.imgur.com/04htj0O.png"></p>
-  <p align="center"><img src="https://i.imgur.com/cnW3Vob.png"></p>
-  <p align="center"><img src="https://i.imgur.com/016vjP0.png"></p>
-  <p align="center"><img src="https://i.imgur.com/E8mXQFj.png"></p>
-  </blockquote>
-</details>
-
-## 💌 Credits and more Information
-Please see: https://forum.stabyourself.net/viewtopic.php?f=13&t=3636
-Or the top of main.lua
-
-- thanks to [**NNB**](https://github.com/NNBnh) for this GitHub README page
+## (Debug keys)
+- f12 - mouse grab
+- f11 - show fps
+- f10 - hitboxes
+- f9 - hide front
+- f8 - reload all
+- f7 - declutter (By WilliamFrog)
+- f6 - toggle swim
+- f5 - toggle bullettime

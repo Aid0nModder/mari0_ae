@@ -536,9 +536,9 @@ function editor_update(dt)
 	oldlevelmodified = levelmodified]]
 	if editormenuopen == false or minimapmoving then
 		--key scroll
-		local speed = 30
+		local speed = A_scrollspeed
 		if love.keyboard.isDown("lalt") then
-			speed = 70
+			speed = A_scrollspeedfast
 		end
 		if (love.keyboard.isDown("left") or (android and leftkey(1) and not autoscroll)) and (rightclickmenuopen or (not brushsizetoggle)) then
 			autoscroll = false
@@ -2417,7 +2417,7 @@ function editor_draw()
 					love.graphics.rectangle("fill", x, y-tilesoffset, 373*scale, 9*scale)
 				end
 			end
-			
+		
 			love.graphics.setScissor()
 			
 			guielements["tilesscrollbar"]:draw()
@@ -3264,6 +3264,40 @@ function editor_draw()
 			--guielements["confirmcancel"]:draw()
 		end
 	end
+
+	if dialogboxpreview then
+        local boxheight = 45
+        local margin = 4
+        local lineheight = 10
+        love.graphics.setColor(0, 0, 0, 127)
+        love.graphics.rectangle("fill", scale*margin, (height*16-boxheight-margin)*scale, (width*16-margin*2)*scale, boxheight*scale)
+        love.graphics.setColor(255, 255, 255)
+        drawrectangle(5, (height*16-margin-boxheight+1), (width*16-margin*2-2), boxheight-2)
+        
+        local availablepixelsx = width*16-margin*2-6
+        local availablepixelsy = boxheight-5
+        local charsx = math.floor(availablepixelsx / 8)
+        local charsy = math.floor(availablepixelsy / lineheight)
+        local text = dialogboxpreview.elements[3].gui.value
+        for i = 1, #text do
+            local x = math.fmod(i-1, charsx)+1
+            local y = math.ceil(i/charsx)
+            if y <= charsy then
+                properprint(string.sub(text, i, i), (7+(x-1)*8)*scale, (height*16-boxheight-margin+4+(y-1)*lineheight)*scale)
+            end
+        end
+        
+        local speaker = dialogboxpreview.elements[5].gui.value
+        local colorgui = dialogboxpreview.elements[7].gui
+        local color = colorgui.entries[colorgui.var]
+        if #speaker ~= 0 then
+            love.graphics.setColor(0, 0, 0, 127)
+            love.graphics.rectangle("fill", scale*margin, (height*16-boxheight-margin-10)*scale, (5+#speaker*8)*scale, 10*scale)
+            
+            love.graphics.setColor(textcolors[color] or textcolors["orange"])
+            properprint(speaker, (margin+2)*scale, (height*16-margin-boxheight+1-9)*scale)
+        end
+    end
 end
 
 --TABS

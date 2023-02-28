@@ -2167,6 +2167,10 @@ function animationguiline:init(tabl, t2)
 			table.insert(self.elements, temp)
 		end
 	end
+
+	if self.t[1] == "dialogbox" then
+        self.dialogbox = true
+    end
 end
 
 function animationguiline:update(dt)
@@ -2177,6 +2181,15 @@ function animationguiline:update(dt)
 	end
 	self.downbutton:update(dt)
 	self.upbutton:update(dt)
+
+	if self.dialogbox then
+        local inputting = self.elements[3].gui.inputting or self.elements[5].gui.inputting
+        if inputting and (not dialogboxpreview) then
+            dialogboxpreview = self
+        elseif (not inputting) and dialogboxpreview == self then
+            dialogboxpreview = false
+        end
+    end
 end
 
 function animationguiline:draw(x, y)
