@@ -133,7 +133,7 @@ function love.load()
 	
 	local ok, result = pcall(loadconfig)
 	if not ok then
-		print("Corrupt settings: " .. tostring(result))
+		print(string.format("[ Error: Corrupt settings - %s ]", tostring(result)))
 		players = 1
 		defaultconfig()
 	end
@@ -166,6 +166,30 @@ function love.load()
 	
 	logo = love.graphics.newImage("graphics/stabyourself.png") --deleted later to save memory
 	logoblood = love.graphics.newImage("graphics/stabyourselfblood.png")
+	
+	if love.filesystem.exists("alesans_entities/familyfriendly.txt") then FamilyFriendly = true end
+	
+	math.randomseed(os.time());math.random();math.random()
+	
+	--intro
+	loadingtexts = {"reticulating splines", "rendering important stuff", "01110000011011110110111001111001", "sometimes, i dream about cheese",
+					"baking cake", "happy explosion day", "raising coolness by a fifth", "yay facepunch", "stabbing myself", "sharpening knives",
+					"tanaka, thai kick", "loading game genie..", "slime will find you", "becoming self-aware", "it's a secret to everybody", "there is no minus world", 
+					"oh my god, jc, a bomb", "silly loading message here", "motivational art by jorichi", "you're my favorite deputy", 
+					"licensed under wtfpl", "banned in australia", "loading anti-piracy module", "watch out there's a sni", "attack while its tail's up!", 
+					"what a horrible night to have a curse", "han shot first", "establishing connection to nsa servers..","how do i programm", 
+					"making palette inaccurate..", "y cant mario crawl?", "please hold..", "avoiding lawsuits", "loading bugs", "traduciendo a ingles",
+					"fixign typo..", "swing your arms", "this message will self destruct in 3 2 1", "preparing deadly neurotoxin", "loading asleons entetis..", 
+					"now with online multiplayer", "any second now..", "all according to keikaku", "we need pow blocks!", "cross your fingers",
+					"not accurate to the nes!", "improved stability to enhance user experience.", "0118 999 881 999 119 7253", "hoo-ray",
+					"removing herobrine", "how do i play multiplayer????", "not mario maker", "hello there", "this statement is false", 
+					"zap to the extreme", "it just works", "eat your arms", "travelling qpus...", "im a tire", "in real life!", "bold and brash", 
+					"giant enemy crabs", "but im super duper, with a big tuper", "see that mountain? you can climb it", "loading alesan99's stuff"}
+						
+	loadingtext = loadingtexts[math.random(#loadingtexts)]
+
+	-- LOADING FONT --
+	local bla = love.timer.getTime()
 
 	--UTF8 Font
 	fontimage = love.graphics.newImage("graphics/SMB/font.png")
@@ -239,28 +263,12 @@ function love.load()
 	fontindexOLD["D"] = "↓"
 	fontindexOLD["U"] = "↑"
 
-	if love.filesystem.exists("alesans_entities/familyfriendly.txt") then FamilyFriendly = true end
-	
-	math.randomseed(os.time());math.random();math.random()
-	
-	--intro
-	loadingtexts = {"reticulating splines", "rendering important stuff", "01110000011011110110111001111001", "sometimes, i dream about cheese",
-					"baking cake", "happy explosion day", "raising coolness by a fifth", "yay facepunch", "stabbing myself", "sharpening knives",
-					"tanaka, thai kick", "loading game genie..", "slime will find you", "becoming self-aware", "it's a secret to everybody", "there is no minus world", 
-					"oh my god, jc, a bomb", "silly loading message here", "motivational art by jorichi", "you're my favorite deputy", 
-					"licensed under wtfpl", "banned in australia", "loading anti-piracy module", "watch out there's a sni", "attack while its tail's up!", 
-					"what a horrible night to have a curse", "han shot first", "establishing connection to nsa servers..","how do i programm", 
-					"making palette inaccurate..", "y cant mario crawl?", "please hold..", "avoiding lawsuits", "loading bugs", "traduciendo a ingles",
-					"fixign typo..", "swing your arms", "this message will self destruct in 3 2 1", "preparing deadly neurotoxin", "loading asleons entetis..", 
-					"now with online multiplayer", "any second now..", "all according to keikaku", "we need pow blocks!", "cross your fingers",
-					"not accurate to the nes!", "improved stability to enhance user experience.", "0118 999 881 999 119 7253", "hoo-ray",
-					"removing herobrine", "how do i play multiplayer????", "not mario maker", "hello there", "this statement is false", 
-					"zap to the extreme", "it just works", "eat your arms", "travelling qpus...", "im a tire", "in real life!", "bold and brash", 
-					"giant enemy crabs", "but im super duper, with a big tuper", "see that mountain? you can climb it", "loading alesan99's stuff"}
-						
-	loadingtext = loadingtexts[math.random(#loadingtexts)]
+	print(string.format("[ Font loaded in %.3f ] ", love.timer.getTime()-bla))
 	loadingbardraw(1)
-	
+
+	-- LOADING LUAS --
+	local bla = love.timer.getTime()
+
 	--require ALL the files!
 	require "shaders"
 	require "spriteloader"
@@ -290,13 +298,19 @@ function love.load()
 	for i = 1, #luas do
 		require(luas[i])
 	end
-	print("done loading .luas!")
+
+	print(string.format("[ %s Luas loaded in %.3f ] ", #luas+10, love.timer.getTime()-bla))
 	loadingbardraw(1)
+
+	-- LOADING ENEMIES --
+	local bla = love.timer.getTime()
+
 	local enemyluas = love.filesystem.getDirectoryItems("enemies")
 	for i = 1, #enemyluas do
 		require("enemies/" .. enemyluas[i]:sub(1, enemyluas[i]:len()-4))
 	end
-	print("done loading enemies!")
+
+	print(string.format("[ %s Enemies loaded in %.3f ] ", #enemyluas, love.timer.getTime()-bla))
 	loadingbardraw(1)
 
 	--json error window
@@ -613,10 +627,10 @@ function love.load()
 	disabletips = false
 
 	loadingbardraw(1)
+
+	-- LOADING QUADS --
+	local bla = love.timer.getTime()
 	
-	------------------------------
-	------------QUADS-------------
-	------------------------------
 	numberglyphs = "012458"
 	font2quads = {}
 	for i = 1, 6 do
@@ -863,10 +877,12 @@ function love.load()
 		minecraftpickaxequad[y] = love.graphics.newQuad(0, (y-1)*20, 20, 20, 20, 100)
 	end
 	
-	print("done loading all quads!")
+	print(string.format("[ All Quads loaded in %.3f ] ", love.timer.getTime()-bla))
 	loadingbardraw(1)
-	
-	--AUDIO--
+
+	-- LOADING AUDIO --
+	local bla = love.timer.getTime()
+
 	--sounds
 	jumpsound = love.audio.newSource("sounds/jump.ogg", "static")
 	jumpbigsound = love.audio.newSource("sounds/jumpbig.ogg", "static")
@@ -992,7 +1008,7 @@ function love.load()
 	end
 	updatesoundlist()
 	
-	print("done loading all " .. #soundlist .. " sounds!")
+	print(string.format("[ %s Sounds loaded in %.3f ] ", #soundlist, love.timer.getTime()-bla))
 	loadingbardraw(1)
 	
 	musici = 2

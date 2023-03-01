@@ -107,7 +107,7 @@ function game_load(suspended)
 	end
 	
 	--add custom tiles
-	local bla = love.timer.getTime()
+	--local bla = love.timer.getTime()
 	if not dcplaying and love.filesystem.exists(mappackfolder .. "/" .. mappack .. "/tiles.png") then
 		loadtiles("custom")
 		customtiles = true
@@ -115,7 +115,7 @@ function game_load(suspended)
 		customtiles = false
 		customtilecount = 0
 	end
-	print("Custom tileset loaded in: " .. round(love.timer.getTime()-bla, 5))
+	--print("Custom tileset loaded in: " .. round(love.timer.getTime()-bla, 5))
 	
 	smbspritebatch = {}
 	portalspritebatch = {}
@@ -3320,7 +3320,7 @@ function drawplayer(i, x, y, r, pad, drop)
 		end
 		
 		if not v.graphic then
-			print("missing player graphics! fuck this game!")
+			--print("missing player graphics! fuck this game!")
 			return false
 		end
 		for k = 1, #v.graphic do
@@ -4412,7 +4412,7 @@ function startlevel(level, reason)
 			mazegates[i] = maxgate
 		end
 	else
-		print("Mazenumber doesn't fit!")
+		--print("Mazenumber doesn't fit!")
 	end
 	
 	--background
@@ -4487,7 +4487,7 @@ function startlevel(level, reason)
 					startx = p.x
 				end
 			else
-				print("no exit pipe entity found! ", pipestartx, " ", pipestarty)
+				--print("no exit pipe entity found! ", pipestartx, " ", pipestarty)
 			end
 		end
 	end
@@ -4639,10 +4639,12 @@ function startlevel(level, reason)
 end
 
 function loadmap(filename)
-	print("Loading " .. mappackfolder .. "/" .. mappack .. "/" .. filename .. ".txt")
+	local bla = love.timer.getTime()
+	print("------------------------------")
+	print(string.format("[ Loading Level %s/%s/%s.txt ]", mappackfolder, mappack, filename))
 	
 	if love.filesystem.exists(mappackfolder .. "/" .. mappack .. "/" .. filename .. ".txt") == false then
-		print(mappackfolder .. "/" .. mappack .. "/" .. filename .. ".txt not found!")
+		print(string.format("[ Error: Level %s/%s/%s.txt couldn't be found ] ", mappackfolder, mappack, filename))
 		return false
 	end
 	local s = love.filesystem.read( mappackfolder .. "/" .. mappack .. "/" .. filename .. ".txt" )
@@ -4661,7 +4663,7 @@ function loadmap(filename)
 	local t = s2[1]:split(",")
 	
 	if math.fmod(#t, mapheight) ~= 0 then
-		print("Incorrect number of entries: " .. #t)
+		--print("Incorrect number of entries: " .. #t)
 		return false
 	end
 	
@@ -4710,7 +4712,7 @@ function loadmap(filename)
 					map[x][y][i] = r[i]
 					--check if custom enemy doesn't exist
 					if editormode and i == 2 and not tablecontains(customenemies, r[i]) then
-						print("custom enemy " .. r[i] .. " does not exist")
+						print(string.format("[ Error: Custom enemy %s does not exist ]", r[i]))
 						map[x][y][i] = 1
 					end
 				end
@@ -4949,6 +4951,8 @@ function loadmap(filename)
 	if customforeground then
 		loadcustomforeground(customforeground)
 	end
+
+	print(string.format("[ Level %s/%s/%s.txt loaded in %.3f ] ", mappackfolder, mappack, filename, love.timer.getTime()-bla))
 	
 	return true
 end
@@ -5058,7 +5062,7 @@ function updatespritebatch()
 			end
 			if draw == true then
 				if (not lmap[x]) then
-					print("spritebatch tile doesnt exist " .. x)
+					--print("spritebatch tile doesnt exist " .. x)
 				else
 					local t = lmap[x][y]
 					
@@ -6288,7 +6292,7 @@ function savemap(filename)
 		end
 	end
 	
-	print("Map saved as " .. mappackfolder .. "/" .. filename .. ".txt")
+	print(string.format("[ Level saved as %s/%s/%s.txt ]", mappackfolder, mappack, filename))
 	if success then
 		notice.new(TEXT["Map saved!"], notice.white, 2)
 	else
@@ -8702,7 +8706,7 @@ end
 function getcollectable(x, y)
 	local c = objects["collectable"][tilemap(x, y)]
 	if not c then
-		print("collectable not found", x, y)
+		--print("collectable not found", x, y)
 		return false
 	end
 	local t = tonumber(c.t)
@@ -9009,11 +9013,11 @@ function drawmaptiles(drawtype, xscroll, yscroll)
 		for x = xfromdraw, xtodraw do
 			--actual tile
 			if (not lmap[x]) then
-				if fore then
+				--[[if fore then
 					print("foreground tile doesnt exist " .. x)
 				else
 					print("drawable tile doesnt exist " .. x)
-				end
+				end]]
 				break
 			end
 			local t = lmap[x][y]

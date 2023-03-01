@@ -45,6 +45,9 @@ local updatetilequads, fixsprites --update tilequad self.image
 local loadedcustomsprites = {} --lists which graphics have been changed
 
 function loadcustomsprites(initial) --Sprite loader
+	-- LOADING IMAGES --
+	local bla = love.timer.getTime()
+
 	local imgtable = imagestable
 	local customspritesexist = love.filesystem.exists(mappackfolder .. "/" .. mappack .. "/custom")
 	if customspritesexist then
@@ -219,7 +222,7 @@ function loadcustomsprites(initial) --Sprite loader
 	updatetilequads()
 	
 	if initial then
-		print("done loading all " .. #imgtable+2 .. " images!")
+		print(string.format("[ %s Images loaded in %.3f ] ", #imgtable+2, love.timer.getTime()-bla))
 	else
 		if not sausagesound then
 			dothesausage(2)

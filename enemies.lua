@@ -125,7 +125,7 @@ function loadenemy(filename)
 	if not skip then --bad letter
 		local data = love.filesystem.read(filename)
 		if not data then
-			print("COULD NOT READ FILE " .. filename)
+			print(string.format("[ ERROR: Could not load enemy %s ]", filename))
 			return
 		end
 		data = data:gsub("\r", "")
@@ -178,8 +178,8 @@ function loadenemy(filename)
 
 		if type(enemiesdata[s]) == "string" then
 			--I have no idea why this happens
-			print("ENEMY DATA FOR " .. s .. " IS CORRUPT:", enemiesdata[s])
-			notice.new("enemy data for " .. s .. "\nis corrupted\n" .. enemiesdata[s], notice.red, 5)
+			print(string.format("[ ERROR: Enemy data for %s is corrupt ]", s), enemiesdata[s])
+			--notice.new("enemy data for " .. s .. "\nis corrupted\n" .. enemiesdata[s], notice.red, 5)
 			return false
 		end
 		
@@ -274,11 +274,11 @@ function loadenemy(filename)
 					end
 				end
 			elseif math.floor(quadwidth) ~= quadwidth then
-				print("IMAGE FOR " .. s .. " NOT DIVISIBLE BY QUADCOUNT")
-				notice.new("image width for " .. s .. "\nnot divisible by quadcount", notice.red, 5)
+				print(string.format("[ ERROR: Image width for %s not divisible by quadcount ]", s))
+				--notice.new("image width for " .. s .. "\nnot divisible by quadcount", notice.red, 5)
 			elseif math.floor(quadheight) ~= quadheight then
-				print("IMAGE FOR " .. s .. " NOT DIVISIBLE BY 4")
-				notice.new("image height for " .. s .. "\nnot divisible by 4 spritesets", notice.red, 5)
+				print(string.format("[ ERROR: Image height for %s not divisible by 4 ]", s))
+				--notice.new("image height for " .. s .. "\nnot divisible by 4 spritesets", notice.red, 5)
 			end
 		end
 
@@ -330,7 +330,7 @@ function loadenemyquad(s, no_notices)
 		if enemiesdata[s].animationtype == "frames" or enemiesdata[s].animationtype == "character" then
 			if not no_notices then
 				if not enemiesdata[s].animationstart then
-					print(s .. " IS MISSING ANIMATIONSTART")
+					--print(s .. " IS MISSING ANIMATIONSTART")
 					notice.new(s .. " is missing\nanimationstart frame", notice.red, 5)
 				end
 			end
