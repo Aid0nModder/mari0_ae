@@ -14,6 +14,7 @@
 - Tweaked - right click menu for region trigger, now uses an input.
 - Tweaked - entitiy menu to show name and ID instead of a useless description.
 - Tweaked - less annoying level testing text.
+- Tweaked - printing to be more consitant.
 ### Removes
 - Removed - online
 - Removed - herobrine
