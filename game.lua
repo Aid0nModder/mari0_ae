@@ -9128,73 +9128,51 @@ function drawmaptiles(drawtype, xscroll, yscroll)
 				
 				if #t > 1 and t[2] ~= "link" then
 					tilenumber = t[2]
+
+					local offsetx = 0
+					if t["argument"] and t["argument"] == "o" then --offset
+						offsetx = .5
+						--love.graphics.setScissor(math.floor((x-1-xoff)*16*screenzoom*scale), math.floor(((y-1-yoff)*16-8)*screenzoom*scale), 16*screenzoom*scale, 16*screenzoom*scale)
+					end
+
 					if tablecontains(customenemies, tilenumber) and enemiesdata[tilenumber] and (enemiesdata[tilenumber].width and enemiesdata[tilenumber].height) then --ENEMY PREVIEW THING
 						local v = enemiesdata[tilenumber]
 						local exoff, eyoff = ((0.5-v.width/2+(v.spawnoffsetx or 0))*16 + v.offsetX - v.quadcenterX)*scale, (((v.spawnoffsety or 0)-v.height+1)*16-v.offsetY - v.quadcenterY)*scale
-						
-						local mx, my = getMouseTile(love.mouse.getX(), love.mouse.getY()+8*scale)
-						local alpha = 150
-						if cox == mx and coy == my then
-							alpha = 255
-						end
-						local offsetx = 0
-						if t["argument"] and t["argument"] == "o" then --offset
-							offsetx = .5
-						end
-						
-						love.graphics.setColor(255, 0, 0, alpha)
+						love.graphics.setColor(255, 0, 0, 150)
 						love.graphics.rectangle("fill", math.floor((x-1-xoff+offsetx)*16*scale), math.floor(((y-1-yoff)*16-8)*scale), 16*scale, 16*scale)
-						love.graphics.setColor(255, 255, 255, alpha)
+						love.graphics.setColor(255, 255, 255, 150)
 						if v.showicononeditor and v.icongraphic then
 							love.graphics.draw(v.icongraphic, math.floor((x-1-xoff+offsetx)*16*scale), ((y-1-yoff)*16-8)*scale, 0, scale, scale)
 						else
 							love.graphics.draw(v.graphic, v.quad, math.floor((x-1-xoff+offsetx)*16*scale+exoff), math.floor(((y-1-yoff)*16)*scale+eyoff), 0, (v.animationscalex or 1)*scale, (v.animationscaley or 1)*scale)
 						end
-						if t["argument"] and t["argument"] == "b" then --supersize
-							love.graphics.setColor(255, 255, 255, 200)
-							love.graphics.draw(entityquads[313].image, entityquads[313].quad, math.floor((x-1-xoff)*16*scale), ((y-1-yoff)*16-8)*scale, 0, scale, scale)
-						end
 					elseif entityquads[tilenumber] and entityquads[tilenumber].t then
 						local i = entityquads[tilenumber].t
+						love.graphics.setColor(255, 255, 255, 150)
 						if (i == "pipe" or i == "pipespawn" or i == "warppipe") and t[3] then
-							--pipe display
 							local qs = 1
 							if i == "pipespawn" then
 								qs = 2
 							elseif i == "warppipe" then
 								qs = 3
 							end
-							love.graphics.setColor(255, 255, 255, 150)
-							if type(t[3]) == "string" then
-								local s = t[3]:split("|")
-								if s[3] then
-									local dir = s[3] or "down"
-									love.graphics.draw(pipesimg, pipesquad[qs][dir], math.floor((x-1-xoff)*16*scale), ((y-1-yoff)*16-8)*scale, 0, scale, scale)
-								else
-									love.graphics.draw(pipesimg, pipesquad[qs]["default"], math.floor((x-1-xoff)*16*scale), ((y-1-yoff)*16-8)*scale, 0, scale, scale)
-								end
-							else
-								love.graphics.draw(pipesimg, pipesquad[qs]["default"], math.floor((x-1-xoff)*16*scale), ((y-1-yoff)*16-8)*scale, 0, scale, scale)
+							local dir = "default"
+							local a = t[3]:split("|")
+							if a[3] then
+								dir = a[3] or "down"
 							end
+							love.graphics.draw(pipesimg, pipesquad[qs][dir], math.floor((x-1-xoff+offsetx)*16*scale), ((y-1-yoff)*16-8)*scale, 0, scale, scale)
 						else
-							local offsetx = 0
-							if t["argument"] and t["argument"] == "o" then --offset
-								offsetx = .5
-								love.graphics.setScissor(math.floor((x-1-xoff)*16*screenzoom*scale), math.floor(((y-1-yoff)*16-8)*screenzoom*scale), 16*screenzoom*scale, 16*screenzoom*scale)
-							end
-							love.graphics.setColor(255, 255, 255, 150)
 							love.graphics.draw(entityquads[tilenumber].image, entityquads[tilenumber].quad, math.floor((x-1-xoff+offsetx)*16*scale), ((y-1-yoff)*16-8)*scale, 0, scale, scale)
-							if offsetx > 0 then
-								love.graphics.setScissor()
-							end
-							if t["argument"] and t["argument"] == "b" then --supersize
-								love.graphics.setColor(255, 255, 255, 200)
-								love.graphics.draw(entityquads[313].image, entityquads[313].quad, math.floor((x-1-xoff+offsetx)*16*scale), ((y-1-yoff)*16-8)*scale, 0, scale, scale)
-							end
 							if (entityquads[tilenumber].t == "track" or entityquads[tilenumber].t == "trackswitch") and not trackpreviews then
 								generatetrackpreviews()
 							end
 						end
+					end
+
+					if t["argument"] and t["argument"] == "b" then --supersize
+						love.graphics.setColor(255, 255, 255, 200)
+						love.graphics.draw(entityquads[313].image, entityquads[313].quad, math.floor((x-1-xoff+offsetx)*16*scale), ((y-1-yoff)*16-8)*scale, 0, scale, scale)
 					end
 					if not drop then
 						love.graphics.setColor(255, 255, 255, 255)
