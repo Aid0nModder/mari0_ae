@@ -5251,7 +5251,7 @@ function game_keypressed(key, textinput)
 	end
 
 	for i = 1, players do
-		if editormode and (editormenuopen or rightclickmenuopen) then
+		if editormode then
 			break
 		end
 
