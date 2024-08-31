@@ -418,7 +418,9 @@ function love.load()
 
 	local britoolluas = love.filesystem.getDirectoryItems("britools")
 	for i = 1, #britoolluas do
-		require("britools." .. britoolluas[i]:sub(1, britoolluas[i]:len()-4))
+		if string.sub(britoolluas[i], -3) == "lua" then
+			require("britools." .. britoolluas[i]:sub(1, britoolluas[i]:len()-4))
+		end
 	end
 
 	print("done loading .luas!")
