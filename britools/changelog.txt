@@ -1,0 +1,14 @@
+Made by Britdan
+@britdan on Discord, Youtube, Tumblr | @greatbritdan on Github
+
+--- Changelog ---
+
+New F key shortcuts:
+- F8 - Reload all assets
+Update tiles, enemies, etc without exiting the mappack
+
+- F9 - Cleanup tiles - Originally by WilliamFrog
+Optimises background tiles by removing obscursed tiles, brining tiles forward if possible, etc
+
+Region edits:
+Allows regins to have 4 pixel precision for reigion triggers, rising water and cam stop.

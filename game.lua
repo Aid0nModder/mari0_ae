@@ -2316,9 +2316,11 @@ function game_draw()
 					if k.width then
 						if xscroll >= k.x-width and k.x+k.width > xscroll then
 							if k.active and not k.red then
-								love.graphics.setColor(255, 255, 255)
+								love.graphics.setColor(225, 225, 225)
+							elseif k.hitboxcolor then 
+								love.graphics.setColor(k.hitboxcolor)
 							else
-								love.graphics.setColor(255, 0, 0)
+								love.graphics.setColor(225, 30, 30)
 							end
 							
 							if k.SLOPE then
@@ -2332,6 +2334,8 @@ function game_draw()
 									points[i+1] = math.floor((points[i+1]+k.y-yscroll-.5)*16*scale)+.5
 								end
 								love.graphics.polygon("line", unpack(points))
+							elseif k.radius then -- grinder
+								love.graphics.circle("line", math.floor((k.x+k.radius-xscroll)*16*scale)+.5, math.floor((k.y+k.radius-yscroll-.5)*16*scale)+.5, k.radius*16*scale)
 							elseif k.width <= 1/16 then
 								love.graphics.rectangle("fill", math.floor((k.x-xscroll)*16*scale), math.floor((k.y-yscroll-.5)*16*scale), k.width*16*scale, k.height*16*scale)
 							elseif incognito then
@@ -2342,12 +2346,12 @@ function game_draw()
 							if k.killzonex then
 								love.graphics.circle("line", math.floor((k.x+k.killzonex-xscroll)*16*scale)+.5, math.floor((k.y+k.killzoney-yscroll-.5)*16*scale)+.5, (math.sqrt(k.killzoner))*16*scale)
 							end
+
+							love.graphics.setColor(30, 225, 225)
 							if k.playerneardist and type(k.playerneardist) == "table" and #k.playerneardist == 4 then
-								love.graphics.setColor(0, 255, 255)
 								love.graphics.rectangle("line", math.floor((k.x+k.playerneardist[1]-xscroll)*16*scale)+.5, math.floor((k.y+k.playerneardist[2]-yscroll-.5)*16*scale)+.5, k.playerneardist[3]*16*scale-1, k.playerneardist[4]*16*scale-1)
 							end
 							if k.movementpath then
-								love.graphics.setColor(0, 255, 33)
 								local t = {}
 								for i = 1, #k.movementpath do
 									table.insert(t, math.floor((k.startx+k.movementpath[i][1]-xscroll)*16*scale)+.5)
@@ -2360,21 +2364,36 @@ function game_draw()
 								love.graphics.line(t)
 							end
 							if k.carryrange then
-								love.graphics.setColor(0, 255, 255)
 								love.graphics.rectangle("line", math.floor((k.x+k.carryrange[1]-xscroll)*16*scale)+.5, math.floor((k.y+k.carryrange[2]-yscroll-.5)*16*scale)+.5, k.carryrange[3]*16*scale-1, k.carryrange[4]*16*scale-1)
 							end
 							if k.blowrange then
-								love.graphics.setColor(100, 255, 255)
 								love.graphics.rectangle("line", math.floor((k.x+k.blowrange[1]-xscroll)*16*scale)+.5, math.floor((k.y+k.blowrange[2]-yscroll-.5)*16*scale)+.5, k.blowrange[3]*16*scale-1, k.blowrange[4]*16*scale-1)
 							end
+							if (k.spawnenemydist and type(k.spawnenemydist) == "table" and #k.spawnenemydist == 4) or (k.dontspawnenemydist and type(k.dontspawnenemydist) == "table" and #k.dontspawnenemydist == 4) then
+								local dist = k.spawnenemydist or k.dontspawnenemydist
+								love.graphics.rectangle("line", math.floor((k.x+dist[1]-xscroll)*16*scale)+.5, math.floor((k.y+dist[2]-yscroll-.5)*16*scale)+.5, dist[3]*16*scale-1, dist[4]*16*scale-1)
+							end
 
-							--[[if k.pointingangle then
+							love.graphics.setColor(30, 225, 30)
+							if k.movementpath then
+								local t = {}
+								for i = 1, #k.movementpath do
+									table.insert(t, math.floor((k.startx+k.movementpath[i][1]-xscroll)*16*scale)+.5)
+									table.insert(t, math.floor((k.starty+k.movementpath[i][2]-yscroll-.5)*16*scale)+.5)
+								end
+								if not k.movementpathturnaround then
+									table.insert(t, math.floor((k.startx+k.movementpath[1][1]-xscroll)*16*scale)+.5)
+									table.insert(t, math.floor((k.starty+k.movementpath[1][2]-yscroll-.5)*16*scale)+.5)
+								end
+								love.graphics.line(t)
+							end
+							
+							love.graphics.setColor(225, 225, 30)
+							if k.pointingangle then
 								local xcenter = k.x + 6/16 - math.sin(k.pointingangle)*userange
 								local ycenter = k.y + 6/16 - math.cos(k.pointingangle)*userange
-							
-								love.graphics.setColor(0, 255, 255)
 								love.graphics.rectangle("line", math.floor((xcenter-usesquaresize/2-xscroll)*16*scale)+.5, math.floor((ycenter-usesquaresize/2-yscroll-.5)*16*scale)+.5, usesquaresize*16*scale-1, usesquaresize*16*scale-1)
-							end]]
+							end
 						end
 					end
 				end
@@ -2848,8 +2867,10 @@ function game_draw()
 	love.graphics.translate(0, yoffset*scale)
 	
 	if testlevel then
-		love.graphics.setColor(255, 0, 0, 127)
-		properprintfast("TESTING LEVEL - PRESS ESC TO RETURN TO EDITOR", 16*scale, 0)
+		love.graphics.setColor(0, 0, 0)
+		properprintfastbackground("TESTING!", 341*scale, ((height*16)-10)*scale)
+		love.graphics.setColor(255, 155, 155)
+		properprintfast("TESTING!", 341*scale, ((height*16)-10)*scale)
 	end
 	
 	--pause menu

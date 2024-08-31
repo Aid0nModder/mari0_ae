@@ -790,7 +790,7 @@ rightclicktype["regiontrigger"] = {
 	format = {
 		"trigger on",
 		{"dropdown", 5, 10, nil, {"player","enemy","cube","everything"}},
-		{"button", 2, {"select region", startrcregion, {1, 2}}}
+		{"button", 2, {"select region", startrcregion, {1, 4}}}
 	},
 }
 
@@ -1826,7 +1826,7 @@ rightclicktype["risingwater"] = {
 		rightclickvalues2[4] = y
 	end,
 	format = {
-		{"button", 1, {"  set area  ", function(var, step) startrcregion(var, step) end, {1, 2}}},
+		{"button", 1, {"  set area  ", function(var, step) startrcregion(var, step) end, {1, 4}}},
 		"type:",
 		{"dropdown", 5, 11, nil, {"clear water", "water", "poison", "poison water", "lava", "quicksand", "quicksandtop"}},
 		"fill:",
@@ -2029,7 +2029,7 @@ rightclicktype["camerastop"] = {
 		rightclickvalues2[4] = y
 	end,
 	format = {
-		{"button", 1, {"select range", function(var, step) startrcregion(var, step) end, {1, 2}}},
+		{"button", 1, {"select range", function(var, step) startrcregion(var, step) end, {1, 4}}},
 		{"checkbox", 5, "force push"},
 		{"checkbox", 6, "ignore if"},
 		"off-screen",

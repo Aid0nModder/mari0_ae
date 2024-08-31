@@ -197,7 +197,7 @@ local loadingbardraw = function(add)
 		love.graphics.scale(winwidth/(width*16*scale), winheight/(224*scale))
 	end
 	love.graphics.setColor(150, 150, 150)
-	properprint("loading mari0..", ((width*16)*scale)/2-string.len("loading mari0..")*4*scale, 20*scale)
+	properprint("loading mari0 (featuring britools)..", ((width*16)*scale)/2-string.len("loading mari0 (featuring britools)..")*4*scale, 20*scale)
 	love.graphics.setColor(50, 50, 50)
 	local scale2 = scale
 	if scale2 <= 1 then
@@ -415,6 +415,12 @@ function love.load()
 	for i = 1, #luas do
 		require(luas[i])
 	end
+
+	local britoolluas = love.filesystem.getDirectoryItems("britools")
+	for i = 1, #britoolluas do
+		require("britools." .. britoolluas[i]:sub(1, britoolluas[i]:len()-4))
+	end
+
 	print("done loading .luas!")
 	loadingbardraw(1)
 	local enemyluas = love.filesystem.getDirectoryItems("enemies")
@@ -2074,17 +2080,10 @@ function love.keypressed(key, scancode, isrepeat, textinput)
 	
 	if key == "0" and HITBOXDEBUG then
 		HITBOXDEBUGANIMS = not HITBOXDEBUGANIMS
-	elseif key == "f10" then
-		if android then
-			--hide ui
-			androidHIDE = not androidHIDE
-		else
-			HITBOXDEBUG = not HITBOXDEBUG
+	else
+		if #key > 1 and string.sub(key,1,1) == "f" then
+			fkeypressed(key)
 		end
-	elseif key == "f11" then
-		showfps = not showfps
-	elseif key == "f12" then
-		love.mouse.setGrabbed(not love.mouse.isGrabbed())
 	end
 	
 	if gamestate == "menu" or gamestate == "mappackmenu" or gamestate == "onlinemenu" or gamestate == "lobby" or gamestate == "options" then
@@ -3186,4 +3185,52 @@ function deepcopy(orig)
         copy = orig
     end
     return copy
+end
+
+--
+
+-- Original code by WilliamFrog
+Printold = print
+function print(...)
+    local vals = {...}
+    local outvals = {}
+    for i, t in pairs(vals) do
+        if type(t) == "table" then
+            outvals[i] = Tabletostring(t)
+        elseif type(t) == "function" then
+            outvals[i] = "function"
+        else
+            outvals[i] = tostring(t)
+        end
+    end
+    Printold(unpack(outvals))
+end
+function Tabletostring(t)
+    local array = true
+    local ai = 0
+    local outtable = {}
+    for i, v in pairs(t) do
+        if type(v) == "table" then
+            outtable[i] = Tabletostring(v)
+        elseif type(v) == "function" then
+            outtable[i] = "function"
+        else
+            outtable[i] = tostring(v)
+        end
+
+        ai = ai + 1
+        if t[ai] == nil then
+            array = false
+        end
+    end
+    local out = ""
+    if array then
+        out = "[" .. table.concat(outtable,",") .. "]"
+    else
+        for i, v in pairs(outtable) do
+            out = string.format("%s%s: %s, ", out, i, v)
+        end
+        out = "{" .. out .. "}"
+    end
+    return out
 end

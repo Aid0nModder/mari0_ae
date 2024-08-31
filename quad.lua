@@ -29,6 +29,7 @@ function quad:init(img, imgdata, x, y, width, height)
 	--get if empty?
 
 	self.image = img
+	self.imagedata = imgdata
 	self.quad = love.graphics.newQuad((x-1)*17, (y-1)*17, 16, 16, width, height)
 	
 	getquadprops(imgdata, x, y, self)
