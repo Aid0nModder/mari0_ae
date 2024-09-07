@@ -3,6 +3,8 @@ Made by Britdan
 
 --- Changelog ---
 
+Updated hitbox debug: custom colors and color tweaks.
+
 New F key shortcuts:
 - F8 - Reload all assets
 Update tiles, enemies, etc without exiting the mappack
@@ -12,3 +14,6 @@ Optimises background tiles by removing obscursed tiles, brining tiles forward if
 
 Region edits:
 Allows regins to have 4 pixel precision for reigion triggers, rising water and cam stop.
+
+New enemy error handling:
+- shows errors for custom timers.
