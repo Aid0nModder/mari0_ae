@@ -2462,6 +2462,18 @@ function enemy:customtimeraction(action, arg, arg2)
 	if type(action) == "table" then --The new *better* custom timer format
 		local a = action[1] --action
 		local p = action[2] --parameter
+
+		if ((arg == nil) and (a == "sin" or a == "cos" or a == "tan" or a == "random")) or
+		((self[p] == nil) and (a == "abs" or a == "reverse" or a == "sqrt" or a == "tonumber" or a == "tostring" or a == "round" or a == "floor" or a == "ceil")) or
+		((self[p] == nil or arg == nil) and (a == "add" or a == "subtract" or a == "divide" or a == "multiply" or a == "mod" or a == "max" or a == "min" or a == "pow")) then
+			print("name:    " .. tostring(self.t))
+			print("line:    " .. tostring(self.currentcustomtimerstage))
+			print("action:  " .. tostring(a))
+			print("property:" .. tostring(p))
+			print("value:   " .. tostring(self[p]))
+			print("arg:     " .. tostring(arg))
+		end
+		
 		if a == "set" then
 			self[p] = arg
 			if p == "quadno" then
@@ -2570,12 +2582,23 @@ function enemy:customtimeraction(action, arg, arg2)
 			local parameter = string.sub(action, 9, string.len(action))
 			self[parameter] = self[parameter] * arg
 		elseif action == "setframe" then
+			if type(self.quadgroup) ~= "table" then
+                print("name: " .. self.t)
+                print("stage: " .. self.currentcustomtimerstage)
+                print("arg: " .. arg)
+            end
 			self.quad = self.quadgroup[arg]
 		elseif LoveConsole and action == "print" then --only for advanced users!
 			if self[arg] then
 				print(self[arg])
 			else
 				print(arg)
+			end
+		elseif LoveConsole and action == "oldprint" then --only for advanced users!
+			if self[arg] then
+				Printold(self[arg])
+			else
+				Printold(arg)
 			end
 		elseif string.sub(action, 0, 3) == "set" then
 			self[string.sub(action, 4, string.len(action))] = arg
