@@ -1,3 +1,10 @@
+## 🔧 Welcome to Britools
+
+This is my personal mod of AE with all kinds of useful tools to help aid in making content. None of these changes conflict with the regular version!
+You can view the changelist [**here**](https://github.com/greatbritdan/mari0_ae/blob/britools/britools/changelog.txt)!
+
+Original by Alesan99 and Maurice, original wiki page below!
+
 <p align="center"><img src="https://i.imgur.com/U5xzR1h.png"></p>
 <p align="center">This is the repository for my mod Mari0: Alesan99's Entities</p>
 
