@@ -3,6 +3,8 @@
 This is my personal mod of AE with all kinds of useful tools to help aid in making content. None of these changes conflict with the regular version!
 You can view the changelist [**here**](https://github.com/greatbritdan/mari0_ae/blob/britools/britools/changelog.txt)!
 
+**I do not currently offer pre-compiled builds! You must use [Love 11.5](https://love2d.org/) or compile it yourself!**
+
 Original by Alesan99 and Maurice, original wiki page below!
 
 <p align="center"><img src="https://i.imgur.com/U5xzR1h.png"></p>
