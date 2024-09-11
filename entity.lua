@@ -789,7 +789,8 @@ rightclicktype["regiontrigger"] = {
 	end,
 	format = {
 		"trigger on",
-		{"dropdown", 5, 10, nil, {"player","enemy","cube","everything"}},
+		{"input", 5, "player", 14, 50, 1, function(v) rightclickvalues2[5] = v end},
+		--{"dropdown", 5, 10, nil, {"player","enemy","cube","everything"}},
 		{"button", 2, {"select region", startrcregion, {1, 4}}}
 	},
 }
