@@ -43,6 +43,8 @@ function editor_load(player_position) --{x, y, xscroll, yscroll}
 		latesttiles = {{1, 1}, {2, 1}, {1, 1}, {1, 1}, {1, 1}, {1, 1}, {1, 1}, {1, 1}} --{type of tile, id}
 	end
 	backgroundtilemode = false
+	overlaytilemode = false
+	underlaytilemode = false
 
 	--sublevels in level
 	sublevelstable = {}
@@ -115,6 +117,8 @@ function editor_load(player_position) --{x, y, xscroll, yscroll}
 	minimapheight = 15
 	
 	currenttile = 1
+	lastplacedtilex = 0
+	lastplacedtiley = 0
 	
 	minimapscrollspeed = 30
 	minimapdragging = false
@@ -503,6 +507,8 @@ function editor_load(player_position) --{x, y, xscroll, yscroll}
 			customtabstate = e.customtabstate
 			assistmode = e.assistmode
 			backgroundtilemode = e.backgroundtilemode
+			overlaytilemode = e.overlaytilemode
+			underlaytilemode = e.underlaytilemode
 			
 			editorsavedata = false
 		end
@@ -1235,10 +1241,14 @@ function editor_draw()
 		elseif ctrlpressed and not love.mouse.isDown("l") then
 			love.graphics.setColor(255, 255, 255, 200)
 			properprintF(TEXT["undo:ctrl+z\ntile selection:left click\nentity selection:ctrl+e\nselect entire map:ctrl+a"], 1*scale, (height*16-4*10)*scale)
-		elseif backgroundtilemode or assistmode or editorstate == "linktool" or editorstate == "portalgun" or editorstate == "selectiontool" or editorstate == "powerline" then
+		elseif backgroundtilemode or overlaytilemode or underlaytilemode or assistmode or editorstate == "linktool" or editorstate == "portalgun" or editorstate == "selectiontool" or editorstate == "powerline" then
 			local s
 			if backgroundtilemode then
 				s = TEXT["background layer"]
+			elseif overlaytilemode then
+				s = "overlay mode"
+			elseif underlaytilemode then
+				s = "underlay mode"
 			elseif assistmode then
 				s = TEXT["assist mode"]
 			elseif editorstate == "linktool" then
@@ -3776,7 +3786,9 @@ function createeditorsavedata(t) -- "testing", "menu", "changelevel"
 		brushsizey = brushsizey,
 		customtabstate = customtabstate,
 		assistmode = assistmode,
-		backgroundtilemode = backgroundtilemode
+		backgroundtilemode = backgroundtilemode,
+		overlaytilemode = overlaytilemode,
+		underlaytilemode = underlaytilemode
 	}
 	if t == "changelevel" then
 		return
@@ -4345,8 +4357,31 @@ function placetile(x, y, tilei)
 			end
 		end
 	end
-	
-	if backgroundtilemode then
+
+	if overlaytilemode then
+		-- don't do it more than once
+		if (not editentities) and (not (lastplacedtilex == cox and lastplacedtiley == coy)) then
+			if map[cox][coy][1] > 1 then
+				map[cox][coy]["back"] = map[cox][coy][1]
+				bmap_on = true
+			end
+			map[cox][coy][1] = currenttile
+			undo_store(cox, coy)
+			generatespritebatch()
+		end
+	elseif underlaytilemode then
+		-- don't do it more than once
+		if (not editentities) and (not (lastplacedtilex == cox and lastplacedtiley == coy)) then
+			if map[cox][coy][1] > 1 then
+				map[cox][coy]["back"] = currenttile
+				bmap_on = true
+			else
+				map[cox][coy][1] = currenttile
+			end
+			undo_store(cox, coy)
+			generatespritebatch()
+		end
+	elseif backgroundtilemode then
 		if not editentities then
 			if map[cox][coy]["back"] ~= currenttile then
 				if currenttile == 1 then
@@ -4479,6 +4514,9 @@ function placetile(x, y, tilei)
 			generatetrackpreviews()
 		end
 	end
+
+	lastplacedtilex, lastplacedtiley = cox, coy
+
 	editortilemousescroll = false
 	editortilemousescrolltimer = 0
 end
@@ -6586,7 +6624,29 @@ function editor_keypressed(key, textinput)
 		if key == "=" then
 			assistmode = not assistmode
 		elseif (key == "-" or key == "tab") then
-			backgroundtilemode = not backgroundtilemode
+			if love.keyboard.isDown("lshift") then
+				if backgroundtilemode then
+					backgroundtilemode = false
+					overlaytilemode = false
+					underlaytilemode = false
+				else
+					if overlaytilemode then
+						overlaytilemode = false
+						underlaytilemode = true
+					else
+						underlaytilemode = false
+						overlaytilemode = true
+					end
+				end
+			else
+				if overlaytilemode or underlaytilemode then
+					overlaytilemode = false
+					backgroundtilemode = false
+					underlaytilemode = false
+				else
+					backgroundtilemode = not backgroundtilemode
+				end
+			end
 		elseif key == "q" then
 			if editentities then
 				editentities = false
