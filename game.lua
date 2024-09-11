@@ -3078,6 +3078,13 @@ function drawentity(j, w, i, v, currentscissor, drop)
 				love.graphics.draw(v.overlaygraphic, v.overlayquad, math.floor(((v.x-xscroll)*16+v.offsetX)*scale), math.floor(((v.y-yscroll)*16-v.offsetY)*scale), v.rotation, dirscale, horscale, v.quadcenterX, v.quadcenterY)
 			end
 		end
+		if j == "enemy" and v.debugprint then
+			if v[v.debugprint] then
+				love.graphics.print(v[v.debugprint],math.floor(((v.x-xscroll)*16+v.offsetX)*scale), math.floor(((v.y-yscroll)*16-v.offsetY)*scale),0,scale,scale)
+			else
+				love.graphics.print("nil",math.floor(((v.x-xscroll)*16+v.offsetX)*scale), math.floor(((v.y-yscroll)*16-v.offsetY)*scale),0,scale,scale)
+			end
+		end
 	end
 	
 	--portal duplication
