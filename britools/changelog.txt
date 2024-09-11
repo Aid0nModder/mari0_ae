@@ -19,3 +19,6 @@ Rightclick edits:
 New enemy debugging:
 - shows errors for custom timers.
 - by setting "debugprint" you can display values in game.
+
+Editor updates:
+- Access and overlay and underlay mode with left shift + tab/-
