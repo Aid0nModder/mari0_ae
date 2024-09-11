@@ -12,8 +12,10 @@ Update tiles, enemies, etc without exiting the mappack
 - F9 - Cleanup tiles - Originally by WilliamFrog
 Optimises background tiles by removing obscursed tiles, brining tiles forward if possible, etc
 
-Region edits:
-Allows regins to have 4 pixel precision for reigion triggers, rising water and cam stop.
+Rightclick edits:
+- Allows regions to have 4 pixel precision for reigion triggers, rising water and cam stop.
+- Region Trigger now allows any value so you can check spesific entities.
 
-New enemy error handling:
+New enemy debugging:
 - shows errors for custom timers.
+- by setting "debugprint" you can display values in game.
