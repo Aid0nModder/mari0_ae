@@ -431,7 +431,7 @@ function love.load()
 	end
 	print("done loading enemies!")
 	loadingbardraw(1)
-
+	
 	--json error window
 	JSONcrashgame = true
 	jsonerrorwindow = errorwindow:new("","")
@@ -601,8 +601,9 @@ function love.load()
 	--add entities
 	entityquads = {}
 	loadtiles("entity", "initial")
-	
+
 	--formated entities list
+	entitiesformcustomstart = 8
 	entitiesform = {
 		{name = "level markers",
 			1,8,100,312,11, --erase and start
@@ -682,17 +683,17 @@ function love.load()
 			231,--[[229,230,232]] --funnels
 			310,--pneumatic tube (just clearpipe but shhh)
 		},
-		{name = "custom enemies",
+		{name = "custom enemies", custom = true,
 		},
 	}
 
-	local namespacing = 10
-	local ly = 0 --listy
+	entitiesformnamespacing = 10
+	entitiesformly = 0 --listy
 	for list = 1, #entitiesform do
-		ly = ly + namespacing
-		entitiesform[list].y = ly
+		entitiesformly = entitiesformly + entitiesformnamespacing
+		entitiesform[list].y = entitiesformly
 		entitiesform[list].h = 17*(math.ceil(#entitiesform[list]/22))
-		ly = ly + entitiesform[list].h
+		entitiesformly = entitiesformly + entitiesform[list].h
 	end
 					
 	--check if entities are missing because i'm stupid

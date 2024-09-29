@@ -2302,7 +2302,12 @@ function editor_draw()
 						love.graphics.setColor(255, 255, 255)
 						properprint("-", (367)*scale, (40+entitiesform[list].y-10)*scale-tilesoffset)
 					end
-					properprintF(TEXT[entitiesform[list].name], (5)*scale, (40+entitiesform[list].y-10)*scale-tilesoffset)
+					if entitiesform[list].custom then
+						love.graphics.draw(customenemyiconimg, (5)*scale, (40+entitiesform[list].y-10)*scale-tilesoffset, 0, scale, scale)
+						properprintF(entitiesform[list].name, (13)*scale, (40+entitiesform[list].y-10)*scale-tilesoffset)
+					else
+						properprintF(TEXT[entitiesform[list].name], (5)*scale, (40+entitiesform[list].y-10)*scale-tilesoffset)
+					end
 					love.graphics.setColor(255, 255, 255)
 					if not entitiesform[list].hidden then
 						for i = 1, #entitiesform[list] do
