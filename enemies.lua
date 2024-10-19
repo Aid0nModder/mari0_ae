@@ -87,63 +87,7 @@ function enemies_load()
 		end
 	end
 
-	-- clear enemies from enemy lists
-	for f = entitiesformcustomstart, #entitiesform do
-		for i = #entitiesform[f], 1, -1 do
-			entitiesform[f][i] = nil
-		end
-	end
-
-	-- add enemies and custom lists
-	for j, w in pairs(customenemies) do
-		if (not enemiesdata[w].hidden) and ((not defaultenemies[w]) or defaultenemies[w] == 0) then
-			if enemiesdata[w].editortab then
-				local name = enemiesdata[w].editortab
-				local found = false
-				for f = entitiesformcustomstart+1, #entitiesform do
-					if entitiesform[f].name == name then
-						table.insert(entitiesform[f], w)
-						if not entitiesform[f].hidden then
-							entitiesform[f].h = 17*(math.ceil(#entitiesform[f]/22))
-						end
-						found = true
-					end
-				end
-				if not found then
-					table.insert(entitiesform,{name=name, custom=true})
-					local f = #entitiesform
-					table.insert(entitiesform[f], w)
-					if not entitiesform[f].hidden then
-						entitiesform[f].h = 17*(math.ceil(#entitiesform[f]/22))
-					end
-				end
-			else
-				table.insert(entitiesform[entitiesformcustomstart], w)
-				if not entitiesform[entitiesformcustomstart].hidden then
-					entitiesform[entitiesformcustomstart].h = 17*(math.ceil(#entitiesform[entitiesformcustomstart]/22))
-				end
-			end
-			if defaultenemies[w] then
-				defaultenemies[w] = defaultenemies[w] + 1
-			end
-		end
-	end
-
-	-- remove empty lists
-	for f = #entitiesform, entitiesformcustomstart+1, -1 do
-		if #entitiesform[f] == 0 then
-			table.remove(entitiesform,f)
-		end
-	end
-
-	entitiesformnamespacing = 10
-	entitiesformly = 0 --listy
-	for list = 1, #entitiesform do
-		entitiesformly = entitiesformly + entitiesformnamespacing
-		entitiesform[list].y = entitiesformly
-		entitiesform[list].h = 17*(math.ceil(#entitiesform[list]/22))
-		entitiesformly = entitiesformly + entitiesform[list].h
-	end
+	loadenemycategories()
 
 	for i = 1, #customenemies do
 		entityquads[customenemies[i]] = entityquads[2]
@@ -382,5 +326,58 @@ function loadenemyquad(s, no_notices)
 		else
 			enemiesdata[s].quad = enemiesdata[s].quadbase[spriteset][enemiesdata[s].quadno]
 		end
+	end
+end
+
+function loadenemycategories()
+	enemycategorydata = JSON:decode(love.filesystem.read(mappackfolder .. "/" .. mappack .. "/enemycategories.json"))
+	local getenemycategory = function (name)
+		for i, v in pairs(enemycategorydata.categories) do
+			if tablecontains(v, name) then
+				return entitiesformcustomstart+i, enemycategorydata.categorynames[i]
+			end
+		end
+		return #entitiesform, enemycategorydata.categorydefault
+	end
+
+	-- clear custom enemy categories
+	for i = #entitiesform, entitiesformcustomstart+1, -1 do
+		entitiesform[i] = nil
+	end
+	for i = #entitiesform[entitiesformcustomstart], 1, -1 do
+		entitiesform[entitiesformcustomstart][i] = nil
+	end
+
+	-- add custom categories
+	for _, v in pairs(enemycategorydata.categorynames) do
+		table.insert(entitiesform,{name=v, custom=true})
+	end
+	table.insert(entitiesform,{name=enemycategorydata.categorydefault, custom=true})
+
+	-- add enemies and custom lists
+	for j, w in pairs(customenemies) do
+		if (not enemiesdata[w].hidden) and ((not defaultenemies[w]) or defaultenemies[w] == 0) then
+			local cidx, cname = getenemycategory(w)
+			table.insert(entitiesform[cidx], w)
+			if not entitiesform[cidx].hidden then
+				entitiesform[cidx].h = 17*(math.ceil(#entitiesform[cidx]/22))
+			end
+		end
+	end
+
+	-- remove empty categories
+	for i = #entitiesform, entitiesformcustomstart, -1 do
+		if #entitiesform[i] == 0 then
+			table.remove(entitiesform,i)
+		end
+	end
+
+	entitiesformnamespacing = 10
+	entitiesformly = 0 --listy
+	for list = 1, #entitiesform do
+		entitiesformly = entitiesformly + entitiesformnamespacing
+		entitiesform[list].y = entitiesformly
+		entitiesform[list].h = 17*(math.ceil(#entitiesform[list]/22))
+		entitiesformly = entitiesformly + entitiesform[list].h
 	end
 end
